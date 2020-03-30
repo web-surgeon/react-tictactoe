@@ -3,8 +3,9 @@ $light-gray: #f6f6f6;
 
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
-  margin: 20px;
+  margin: 5px;
   background: #ddd;
+  color: #333;
 
   * {
     box-sizing: border-box;
@@ -21,9 +22,21 @@ body {
   font-size: 16px;
   margin-bottom: 20px;
 
-  span {
+  em {
     color: $dark-blue;
     font-weight: bold;
+  }
+
+  .game-reset {
+    float: right;
+    background-color: $light-gray;
+    border: 1px solid #666;
+    border-radius: 3px;
+    font-size: 14px;
+
+    &:hover {
+      color: $dark-blue;
+    }
   }
 }
 
@@ -134,4 +147,20 @@ body {
 
 .latest-move {
   color: $dark-blue;
+}
+
+@media only screen and (max-width: 600px) {
+  .game-container {
+    margin: 20px auto;
+  }
+
+  .game-info {
+    padding: 15px 15px 0px 15px;
+
+    button {
+      span {
+        display: none;
+      }
+    }
+  }
 }

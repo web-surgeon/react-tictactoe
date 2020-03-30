@@ -8,16 +8,22 @@ export default class Game extends React.Component {
 
     this.totalRowsCols = 3;
     this.totalSquares = this.totalRowsCols * this.totalRowsCols;
-
-    this.state = {
+    this.initialState = {
       history: [
         {
           squares: Array(this.totalSquares).fill(null)
         }
       ],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      winningLine: false
     };
+
+    this.state = this.initialState;
+  }
+
+  resetGame() {
+    this.setState(this.initialState);
   }
 
   handleClick(i) {
@@ -27,6 +33,7 @@ export default class Game extends React.Component {
     const marker = this.getMarker();
     const posX = (i % this.totalRowsCols) + 1;
     const posY = Math.floor(i / this.totalRowsCols) + 1;
+    let audio = new Audio("./winner.mp3");
 
     if (squares[i]) {
       return;
@@ -40,6 +47,8 @@ export default class Game extends React.Component {
 
     if (this.calculateWinner(squares)) {
       this.setState({ winningLine: this.calculateWinner(squares) });
+
+      audio.play();
     }
 
     this.setState({
@@ -68,7 +77,7 @@ export default class Game extends React.Component {
         return false;
       }
 
-      const desc = `Go to move #${move}  (${step.marker} - ${step.posY}${
+      const desc = `#${move}  (${step.marker} - ${step.posY}${
         alphaMoves[step.posX]
       })`;
 
@@ -78,7 +87,7 @@ export default class Game extends React.Component {
           className={getLatestMoveClass(this.state.stepNumber === move)}
           onClick={() => this.jumpTo(move)}
         >
-          {desc}
+          <span>Go to move</span> {desc}
         </button>
       );
     });
@@ -134,11 +143,11 @@ export default class Game extends React.Component {
 
   getBoardStatus(winner) {
     if (winner) {
-      return "And the winner is <span>" + winner + "</span>";
+      return "And the winner is <em>" + winner + "</em>.";
     } else if (this.state.history.length > this.totalSquares) {
-      return "Well, looks like the game finished in a <span>tie</span>";
+      return "The game has finished in a <em>tie</em>.";
     } else {
-      return "The next move belongs to <span>" + this.getMarker() + "</span>";
+      return "The next move belongs to <em>" + this.getMarker() + "</em>.";
     }
   }
 
@@ -150,10 +159,13 @@ export default class Game extends React.Component {
 
     return (
       <div className="game-container">
-        <div
-          className="game-status"
-          dangerouslySetInnerHTML={{ __html: status }}
-        />
+        <div className="game-status">
+          <button className="game-reset" onClick={() => this.resetGame()}>
+            Reset
+          </button>
+
+          <span dangerouslySetInnerHTML={{ __html: status }} />
+        </div>
 
         <div className={"game " + (!winner ? "active" : "done")}>
           <div className="game-board">
